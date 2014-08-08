@@ -21,14 +21,20 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-
-/**
+/*
  * Created by robm on 07/08/2014.
  */
 
 public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private BRJS brjs;
     private Logger logger;
+
+    static void rm(File f) {
+        if (f.isDirectory())
+            for (File c : f.listFiles())
+                rm(c);
+        f.delete();
+    }
 
     @Override
     protected void configureArgsParser(JSAP jsap) throws JSAPException {
@@ -57,30 +63,29 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
                 e.printStackTrace();
             }
         }
-
         return 0;
+    }
+
+    private void cloneRepositoryFromGithub(String url) throws IOException, GitAPIException {
+        File localPath = File.createTempFile(url.split("/")[url.split("/").length].replace(".git", ""), "");
+        Git.cloneRepository().setURI(url).setDirectory(localPath).call();
+        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        Repository repository = builder.setGitDir(localPath).readEnvironment().build();
+        repository.close();
     }
 
     private void makeBranchOfRepository(String url, String branchName) throws GitAPIException, JGitInternalException, IOException {
         File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmp" + System.currentTimeMillis());
-        if (tmpDir.mkdirs()) {
-            Git git = Git.cloneRepository().setDirectory(tmpDir).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
-            git.checkout().setName(branchName).call();
-            try {
-                git.checkout().setName("test").call();
-            } catch (RefNotFoundException e) {
-                System.err.println("couldn't checkout 'test'. Got exception: " + e.toString() + ". HEAD: " + git.getRepository().getRef("HEAD"));
-            }
-        } else {
+        tmpDir.mkdirs();
+        Git git = Git.cloneRepository().setDirectory(tmpDir).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
+        git.checkout().setName(branchName).call();
+        try {
+            git.checkout().setName("test").call();
+        } catch (RefNotFoundException e) {
+            System.err.println("couldn't checkout 'test'. Got exception: " + e.toString() + ". HEAD: " + git.getRepository().getRef("HEAD"));
+        } finally {
             rm(tmpDir);
         }
-    }
-
-    static void rm(File f) {
-        if (f.isDirectory())
-            for (File c :  f.listFiles())
-                rm(c);
-        f.delete();
     }
 
     public void downloadAndUnpackageZip(String url) {
@@ -89,8 +94,8 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void unpackageZip(String url) {
-        String source = "C\\Users\\robm\\Downloads\\" + url.split("/")[url.split("/").length].replace(".git", "-master.zip");
-        String destination = "C\\Users\\robm\\" + url.split("/")[url.split("/").length].replace(".git", "");
+        String source = "C\\Users\\robm\\Downloads\\" + url.split("/")[url.split("/").length - 1].replace(".git", "-master.zip");
+        String destination = "C\\Users\\robm\\" + url.split("/")[url.split("/").length - 1].replace(".git", "");
 
         try {
             ZipFile zipFile = new ZipFile(source);
@@ -101,28 +106,16 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void downloadZip(String url) {
-        String zipURLFromGithubURL = url.replace(".git", "/master/zip/") + url.split("/")[url.split("/").length].replace(".git", "") + "-master.zip";
+        String zipURLFromGithubURL = url.replace(".git", "archive/master.zip");
 
         try {
             URL website = new URL(zipURLFromGithubURL);
             ReadableByteChannel readableByteChannel = Channels.newChannel(website.openStream());
-            FileOutputStream fileOutputStream = new FileOutputStream("information.html");
+            FileOutputStream fileOutputStream = new FileOutputStream(url.split("/")[url.split("/").length - 1].replace(".git", "-master.zip"));
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void cloneRepositoryFromGithub(String url) throws IOException, GitAPIException {
-        // prepare a new folder for the cloned repository
-        File localPath = File.createTempFile(url.split("/")[url.split("/").length].replace(".git", ""), "");
-        localPath.delete();
-        // then clone
-        Git.cloneRepository().setURI(url).setDirectory(localPath).call();
-        // now open the created repository
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repository = builder.setGitDir(localPath).readEnvironment().build();
-        repository.close();
     }
 
     @Override
