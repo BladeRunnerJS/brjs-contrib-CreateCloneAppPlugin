@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: brjs-netty-3.5.2.Final">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/BladeRunnerJS/sdk/libs/java/system/brjs-netty-3.5.2.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

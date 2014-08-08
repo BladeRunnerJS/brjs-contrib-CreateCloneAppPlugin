@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: brjs-closure-compiler-v20130823">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/BladeRunnerJS/sdk/libs/java/system/brjs-closure-compiler-v20130823.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

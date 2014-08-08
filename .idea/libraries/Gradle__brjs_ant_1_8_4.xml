@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: brjs-ant-1.8.4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/BladeRunnerJS/sdk/libs/java/system/brjs-ant-1.8.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

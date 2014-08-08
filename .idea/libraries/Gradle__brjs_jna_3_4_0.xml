@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: brjs-jna-3.4.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/BladeRunnerJS/sdk/libs/java/system/brjs-jna-3.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

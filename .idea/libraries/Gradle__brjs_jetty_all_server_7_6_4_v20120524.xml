@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: brjs-jetty-all-server-7.6.4.v20120524">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/BladeRunnerJS/sdk/libs/java/system/brjs-jetty-all-server-7.6.4.v20120524.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

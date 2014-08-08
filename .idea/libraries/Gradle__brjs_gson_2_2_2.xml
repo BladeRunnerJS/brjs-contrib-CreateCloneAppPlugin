@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: brjs-gson-2.2.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/BladeRunnerJS/sdk/libs/java/system/brjs-gson-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
