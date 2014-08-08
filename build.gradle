@@ -15,8 +15,11 @@ if (project.hasProperty("brjsPath"))
 		from jar.outputs.files.singleFile
 		into brjsConfJavaDir
 
-        from "${brjsPath}/../Documents/*.jar"
-        to "${brjsPath}/conf/java"
+        from "${brjsPath}/../Documents/org.eclipse.jgit-3.4.1.201406201815-r.jar"
+        into "${brjsPath}/conf/java"
+
+        from "${brjsPath}/../Documents/zip4j_1.3.2.jar"
+        into "${brjsPath}/conf/java"
 		doLast {
 			println "${project.name} jar copied to ${brjsConfJavaDir.getAbsolutePath()}"
 		}
