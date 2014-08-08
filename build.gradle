@@ -21,7 +21,7 @@ if (project.hasProperty("brjsPath"))
         from "${brjsPath}/../Documents/zip4j_1.3.2.jar"
         into "${brjsPath}/conf/java"
 		doLast {
-			println "${project.name} jar copied to ${brjsConfJavaDir.getAbsolutePath()}"
+			println "${project.name} jar copied to ${brjsConfJavaDir.getAbsolutePath()} along with the specified dependents."
 		}
 	}
 
