@@ -1,3 +1,5 @@
+import org.bladerunnerjs.testing.specutility.engine.SpecTest;
+import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -5,11 +7,17 @@ import static junit.framework.Assert.assertEquals;
 /*
  * Created by robm on 08/08/2014.
  */
-public class CreateCloneAppPluginTest {
+public class CreateCloneAppPluginTest extends SpecTest{
+
+    @Before
+    public void initTestObjects() throws Exception {
+        given(brjs).hasCommandPlugins(new CreateCloneAppPlugin()).and(brjs).hasBeenCreated();
+    }
+
     @Test
-    public void urlIsCorrectlyManipulatedToGetRelevantParts() {
-        String url = "https://github.com/robknows/CreateCloneAppPlugin.git";
-        assertEquals("CreateCloneAppPlugin", url.split("/")[url.split("/").length - 1].replace(".git", ""));
-        assertEquals("https://github.com/robknows/CreateCloneAppPlugin/archive/master.zip", url.replace(".git", "/archive/master.zip"));
+    public void commandIsAutomaticallyLoaded() throws Exception {
+        given(brjs).hasBeenAuthenticallyCreated();
+        when(brjs).runCommand("help", "clone-app-from-github");
+        then(exceptions).verifyNoOutstandingExceptions();
     }
 }

@@ -27,7 +27,6 @@ import java.nio.channels.ReadableByteChannel;
 
 public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private BRJS brjs;
-    private Logger logger;
 
     static void rm(File f) {
         if (f.isDirectory())
@@ -131,6 +130,5 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     @Override
     public void setBRJS(BRJS brjs) {
         this.brjs = brjs;
-        this.logger = brjs.logger(CreateCloneAppPlugin.class);
     }
 }
