@@ -28,7 +28,7 @@ import java.nio.channels.ReadableByteChannel;
 public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private BRJS brjs;
 
-    static void rm(File f) {
+    public static void rm(File f) {
         if (f.isDirectory())
             for (File c : f.listFiles())
                 rm(c);
@@ -44,25 +44,40 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
 
     @Override
     protected int doCommand(JSAPResult jsapResult) throws CommandArgumentsException, CommandOperationException {
+        if (jsapResult.getBoolean("download-zip")) {
+            getRawRepository(jsapResult);
+        } else {
+            cloneRepository(jsapResult);
+        }
+        return 0;
+    }
+
+    private void getRawRepository(JSAPResult jsapResult) {
+        downloadAndUnpackageZip(jsapResult.getString("url-of-repo-to-be-cloned"));
+    }
+
+    private void cloneRepository(JSAPResult jsapResult) {
+        if (jsapResult.getBoolean("take-branch")) {
+            cloneRepositoryBranch(jsapResult);
+        } else {
+            cloneRepositoryMaster(jsapResult);
+        }
+    }
+
+    private void cloneRepositoryMaster(JSAPResult jsapResult) {
         try {
             cloneRepositoryFromGithub(jsapResult.getString("url-of-repo-to-be-cloned"));
         } catch (IOException | GitAPIException e) {
             e.printStackTrace();
-            return 69;
         }
+    }
 
-        if (jsapResult.getBoolean("download-zip")) {
-            downloadAndUnpackageZip(jsapResult.getString("url-of-repo-to-be-cloned"));
+    private void cloneRepositoryBranch(JSAPResult jsapResult) {
+        try {
+            makeBranchOfRepository(jsapResult.getString("url-of-repo-to-be-cloned"), jsapResult.getString("branch"));
+        } catch (GitAPIException | IOException e) {
+            e.printStackTrace();
         }
-
-        if (jsapResult.getBoolean("take-branch")) {
-            try {
-                makeBranchOfRepository(jsapResult.getString("url-of-repo-to-be-cloned"), jsapResult.getString("branch"));
-            } catch (GitAPIException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return 0;
     }
 
     private void cloneRepositoryFromGithub(String url) throws IOException, GitAPIException {

@@ -2,8 +2,6 @@ import org.bladerunnerjs.testing.specutility.engine.SpecTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-
 /*
  * Created by robm on 08/08/2014.
  */
