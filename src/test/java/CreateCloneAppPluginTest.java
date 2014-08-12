@@ -20,14 +20,11 @@ public class CreateCloneAppPluginTest extends SpecTest {
         app = brjs.app("testRepo");
     }
 
-//This test is broken
-//    @Test
-//    @Ignore
-//    public void commandIsAutomaticallyLoaded() throws Exception {
-//        given(brjs).hasBeenAuthenticallyCreated();
-//        when(brjs).runCommand("help", "clone-app-from-github");
-//        then(exceptions).verifyNoOutstandingExceptions();
-//    }
+    @Test
+    public void commandIsAutomaticallyLoaded() throws Exception {
+        when(brjs).runCommand("help", "clone-app-from-github");
+        then(exceptions).verifyNoOutstandingExceptions();
+    }
 
     @Test
     public void correctlyClonesGithubRepo() throws Exception {
