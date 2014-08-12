@@ -56,11 +56,24 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void cloneRepository(JSAPResult jsapResult) {
-        if (jsapResult.getBoolean("take-branch")) {
-            cloneRepositoryBranch(jsapResult);
-        } else {
+        boolean isBranchToBeTaken = determineIfABranchIsToBeTaken(jsapResult);
+        if (isBranchToBeTaken) {
             cloneRepositoryMaster(jsapResult);
+        } else {
+            cloneRepositoryBranch(jsapResult);
         }
+    }
+
+    private boolean determineIfABranchIsToBeTaken(JSAPResult jsapResult) {
+        boolean isBranchToBeTaken;
+        try {
+            isBranchToBeTaken = jsapResult.getBoolean("branch");
+            System.err.println(isBranchToBeTaken);
+        } catch (Exception e) {
+            System.err.println("No branch specified");
+            isBranchToBeTaken = false;
+        }
+        return isBranchToBeTaken;
     }
 
     private void cloneRepositoryMaster(JSAPResult jsapResult) {
@@ -80,7 +93,7 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void cloneRepositoryFromGithub(String url) throws IOException, GitAPIException {
-        File localPath = File.createTempFile(url.split("/")[url.split("/").length].replace(".git", ""), "");
+        File localPath = File.createTempFile("../BladeRunnerJS/apps/" + url.split("/")[url.split("/").length - 1].replace(".git", ""), "");
         Git.cloneRepository().setURI(url).setDirectory(localPath).call();
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repository = builder.setGitDir(localPath).readEnvironment().build();
@@ -88,7 +101,7 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void makeBranchOfRepository(String url, String branchName) throws GitAPIException, JGitInternalException, IOException {
-        File tmpDir = new File(System.getProperty("java.io.tmpdir"), "tmp" + System.currentTimeMillis());
+        File tmpDir = new File("../BladeRunnerJS/apps/" + url.split("/")[url.split("/").length - 1].replace(".git", ""), "");
         tmpDir.mkdirs();
         Git git = Git.cloneRepository().setDirectory(tmpDir).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
         git.checkout().setName(branchName).call();
@@ -102,14 +115,15 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     public void downloadAndUnpackageZip(String url) {
-        downloadZip(url);
+        //downloadZip(url);
         unpackageZip(url);
     }
 
     private void unpackageZip(String url) {
-        String source = "C\\Users\\robm\\Downloads\\" + url.split("/")[url.split("/").length - 1].replace(".git", "-master.zip");
-        String destination = "C\\Users\\robm\\" + url.split("/")[url.split("/").length - 1].replace(".git", "");
-
+        String source = "/C/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo/master.zip";
+        System.err.println(source);
+        String destination = "/C/Users/robm/BladeRunnerJS/apps/" + url.split("/")[url.split("/").length - 1].replace(".zip", "");
+        System.err.println(destination);
         try {
             ZipFile zipFile = new ZipFile(source);
             zipFile.extractAll(destination);
@@ -119,7 +133,7 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void downloadZip(String url) {
-        String zipURLFromGithubURL = url.replace(".git", "archive/master.zip");
+        String zipURLFromGithubURL = url.replace(".git", "") + "/archive/master.zip";
 
         try {
             URL website = new URL(zipURLFromGithubURL);
