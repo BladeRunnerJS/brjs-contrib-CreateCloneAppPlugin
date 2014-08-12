@@ -8,14 +8,14 @@ import java.io.File;
 /*
  * Created by robm on 08/08/2014.
  */
-public class CreateCloneAppPluginTest extends SpecTest{
+public class CreateCloneAppPluginTest extends SpecTest {
 
     @Before
     public void initTestObjects() throws Exception {
         given(brjs).hasCommandPlugins(new CreateCloneAppPlugin()).and(brjs).hasBeenCreated();
     }
 
-                //This test is broken
+//This test is broken
 //    @Test
 //    @Ignore
 //    public void commandIsAutomaticallyLoaded() throws Exception {
@@ -32,8 +32,8 @@ public class CreateCloneAppPluginTest extends SpecTest{
     }
 
     @Test
-    public void correctlyDownloadsMasterZip() throws Exception {
+    public void correctlyUnzipsMasterZip() throws Exception {
         when(brjs).runCommand("clone-app-from-github", "C:/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo", "--raw");
-        then(new File("C:/Users/robm/BladeRunnerJS/apps/testRepo")).containsFile("README.md");
+        then(new File("C:/Users/robm/BladeRunnerJS/apps/master")).containsFile("README.md");
     }
 }

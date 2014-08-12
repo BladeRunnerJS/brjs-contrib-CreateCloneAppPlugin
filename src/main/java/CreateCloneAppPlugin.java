@@ -56,48 +56,16 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void cloneRepository(JSAPResult jsapResult) {
-        boolean isBranchToBeTaken = determineIfABranchIsToBeTaken(jsapResult);
-        if (isBranchToBeTaken) {
-            cloneRepositoryMaster(jsapResult);
-        } else {
-            cloneRepositoryBranch(jsapResult);
-        }
-    }
-
-    private boolean determineIfABranchIsToBeTaken(JSAPResult jsapResult) {
-        boolean isBranchToBeTaken;
-        try {
-            isBranchToBeTaken = jsapResult.getBoolean("branch");
-            System.err.println(isBranchToBeTaken);
-        } catch (Exception e) {
-            System.err.println("No branch specified");
-            isBranchToBeTaken = false;
-        }
-        return isBranchToBeTaken;
-    }
-
-    private void cloneRepositoryMaster(JSAPResult jsapResult) {
-        try {
-            cloneRepositoryFromGithub(jsapResult.getString("url-of-repo-to-be-cloned"));
-        } catch (IOException | GitAPIException e) {
-            e.printStackTrace();
-        }
+        cloneRepositoryBranch(jsapResult);
     }
 
     private void cloneRepositoryBranch(JSAPResult jsapResult) {
         try {
-            makeBranchOfRepository(jsapResult.getString("url-of-repo-to-be-cloned"), jsapResult.getString("branch"));
+            String branchName = jsapResult.getString("branch") == null ? "master" : jsapResult.getString("branch");
+            makeBranchOfRepository(jsapResult.getString("url-of-repo-to-be-cloned"), branchName);
         } catch (GitAPIException | IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void cloneRepositoryFromGithub(String url) throws IOException, GitAPIException {
-        File localPath = File.createTempFile("../BladeRunnerJS/apps/" + url.split("/")[url.split("/").length - 1].replace(".git", ""), "");
-        Git.cloneRepository().setURI(url).setDirectory(localPath).call();
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repository = builder.setGitDir(localPath).readEnvironment().build();
-        repository.close();
     }
 
     private void makeBranchOfRepository(String url, String branchName) throws GitAPIException, JGitInternalException, IOException {
@@ -120,12 +88,11 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void unpackageZip(String url) {
-        String source = "/C/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo/master.zip";
-        System.err.println(source);
-        String destination = "/C/Users/robm/BladeRunnerJS/apps/" + url.split("/")[url.split("/").length - 1].replace(".zip", "");
-        System.err.println(destination);
+        String source = "C:/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo/archive/testRepo-master.zip";
+        String destination = "C:/Users/robm/BladeRunnerJS/apps";
         try {
             ZipFile zipFile = new ZipFile(source);
+            System.out.println(new File(source).exists());
             zipFile.extractAll(destination);
         } catch (ZipException e) {
             e.printStackTrace();
