@@ -5,4 +5,3 @@ A command plugin for BladeRunnerJS which clones a github repository with options
 
 ## Future
 - Needs more tests, especially specTests
-- The service loader file needs to be written into since I can't seem to configure it to actually load the command into brjs
