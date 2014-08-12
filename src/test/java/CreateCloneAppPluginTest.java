@@ -1,3 +1,4 @@
+import org.bladerunnerjs.model.App;
 import org.bladerunnerjs.testing.specutility.engine.SpecTest;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -8,11 +9,15 @@ import java.io.File;
 /*
  * Created by robm on 08/08/2014.
  */
+
 public class CreateCloneAppPluginTest extends SpecTest {
+
+    private App app;
 
     @Before
     public void initTestObjects() throws Exception {
         given(brjs).hasCommandPlugins(new CreateCloneAppPlugin()).and(brjs).hasBeenCreated();
+        app = brjs.app("testRepo");
     }
 
 //This test is broken
@@ -26,14 +31,13 @@ public class CreateCloneAppPluginTest extends SpecTest {
 
     @Test
     public void correctlyClonesGithubRepo() throws Exception {
-        when(brjs).runCommand("clone-app-from-github", "C:/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo");
-        then(new File("C:/Users/robm/BladeRunnerJS/apps/testRepo")).containsFile("README.md");
-        //Now passes because I changed the paths to be absolute
+        when(brjs).runCommand("clone-app-from-github", new File("src/test/resources/testRepo.git").getAbsolutePath());
+        then(app).hasFile("README.md");
     }
 
     @Test
     public void correctlyUnzipsMasterZip() throws Exception {
-        when(brjs).runCommand("clone-app-from-github", "C:/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo", "--raw");
+        when(brjs).runCommand("clone-app-from-github", new File("src/test/resources/testRepo/archive/testRepo-master.zip").getAbsolutePath(), "--raw");
         then(new File("C:/Users/robm/BladeRunnerJS/apps/master")).containsFile("README.md");
     }
 }

@@ -1,6 +1,8 @@
 import com.martiansoftware.jsap.*;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
+import org.bladerunnerjs.model.App;
 import org.bladerunnerjs.model.BRJS;
 import org.bladerunnerjs.model.exception.command.CommandArgumentsException;
 import org.bladerunnerjs.model.exception.command.CommandOperationException;
@@ -27,13 +29,6 @@ import java.nio.channels.ReadableByteChannel;
 public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private BRJS brjs;
 
-    public static void rm(File f) {
-        if (f.isDirectory())
-            for (File c : f.listFiles())
-                rm(c);
-        f.delete();
-    }
-
     @Override
     protected void configureArgsParser(JSAP jsap) throws JSAPException {
         jsap.registerParameter(new UnflaggedOption("url-of-repo-to-be-cloned").setRequired(true).setHelp("The url of the repository to be cloned"));
@@ -52,14 +47,12 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void getRawRepository(JSAPResult jsapResult) {
-        downloadAndUnpackageZip(jsapResult.getString("url-of-repo-to-be-cloned"));
+        String url = jsapResult.getString("url-of-repo-to-be-cloned");
+//        downloadZip(url);
+        unpackageZip(url);
     }
 
     private void cloneRepository(JSAPResult jsapResult) {
-        cloneRepositoryBranch(jsapResult);
-    }
-
-    private void cloneRepositoryBranch(JSAPResult jsapResult) {
         try {
             String branchName = jsapResult.getString("branch") == null ? "master" : jsapResult.getString("branch");
             makeBranchOfRepository(jsapResult.getString("url-of-repo-to-be-cloned"), branchName);
@@ -69,30 +62,19 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void makeBranchOfRepository(String url, String branchName) throws GitAPIException, JGitInternalException, IOException {
-        File tmpDir = new File("../BladeRunnerJS/apps/" + url.split("/")[url.split("/").length - 1].replace(".git", ""), "");
-        tmpDir.mkdirs();
-        Git git = Git.cloneRepository().setDirectory(tmpDir).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
-        git.checkout().setName(branchName).call();
-        try {
-            git.checkout().setName("test").call();
-        } catch (RefNotFoundException e) {
-            System.err.println("couldn't checkout 'test'. Got exception: " + e.toString() + ". HEAD: " + git.getRepository().getRef("HEAD"));
-        } finally {
-            rm(tmpDir);
-        }
-    }
-
-    public void downloadAndUnpackageZip(String url) {
-        //downloadZip(url);
-        unpackageZip(url);
+        url = url.replace("\\", "/");
+        String appName = StringUtils.substringAfterLast(url, "/");
+        appName = appName.endsWith(".git") ? StringUtils.substringBeforeLast(appName, ".git") : appName;
+        App app = brjs.app(appName);
+        app.dir().mkdir();
+        Git.cloneRepository().setDirectory(app.dir()).setBranch(branchName).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
     }
 
     private void unpackageZip(String url) {
-        String source = "C:/Users/robm/CreateCloneAppPlugin/src/test/resources/testRepo/archive/testRepo-master.zip";
+        String source = new File("src/test/resources/testRepo/archive/testRepo-master.zip").getAbsolutePath();
         String destination = "C:/Users/robm/BladeRunnerJS/apps";
         try {
             ZipFile zipFile = new ZipFile(source);
-            System.out.println(new File(source).exists());
             zipFile.extractAll(destination);
         } catch (ZipException e) {
             e.printStackTrace();
