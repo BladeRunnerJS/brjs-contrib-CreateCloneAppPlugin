@@ -1,7 +1,6 @@
 import org.bladerunnerjs.model.App;
 import org.bladerunnerjs.testing.specutility.engine.SpecTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -33,8 +32,8 @@ public class CreateCloneAppPluginTest extends SpecTest {
     }
 
     @Test
-    public void correctlyUnzipsMasterZip() throws Exception {
-        when(brjs).runCommand("clone-app-from-github", new File("src/test/resources/testRepo/archive/testRepo-master.zip").getAbsolutePath(), "--raw");
-        then(new File("C:/Users/robm/BladeRunnerJS/apps/master")).containsFile("README.md");
+    public void correctlyUnzipsAndDownloadsMasterZip() throws Exception {
+        when(brjs).runCommand("clone-app-from-github", "https://github.com/BladeRunnerJS/brjstodo-getting-started.git", "--raw");
+        then(new File("src/test/resources/apps/brjstodo-getting-started-master/todo-bladeset/blades/input/resources/html")).containsFile("view.html");
     }
 }

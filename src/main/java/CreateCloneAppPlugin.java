@@ -26,6 +26,9 @@ import java.nio.channels.ReadableByteChannel;
 public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private BRJS brjs;
 
+    //This string value is the place where the zip file
+    private final String destination = "src/test/resources/apps/"; //THIS VALUE IS FOR TESTING
+
     @Override
     protected void configureArgsParser(JSAP jsap) throws JSAPException {
         jsap.registerParameter(new UnflaggedOption("url-of-repo-to-be-cloned").setRequired(true).setHelp("The url of the repository to be cloned"));
@@ -46,7 +49,7 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private void getRawRepository(JSAPResult jsapResult) {
         String url = jsapResult.getString("url-of-repo-to-be-cloned");
         downloadZip(url);
-        ExtractFromZipAtDestination(url);
+        extractFromZipAtDestination(destination + "master.zip");
     }
 
     private void cloneRepository(JSAPResult jsapResult) {
@@ -66,13 +69,12 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
         Git.cloneRepository().setDirectory(app.dir()).setBranch(branchName).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
     }
 
-    private void ExtractFromZipAtDestination(String url) {
-        String source = new File("src/test/resources/testRepo/archive/testRepo-master.zip").getAbsolutePath();
-        String destination = "C:/Users/robm/BladeRunnerJS/apps";
-        unzipFromSourceToDestination(source, destination);
+    private void extractFromZipAtDestination(String url) {
+        String source = new File(url).getAbsolutePath();
+        unzipFromSourceToDestination(source);
     }
 
-    private void unzipFromSourceToDestination(String source, String destination) {
+    private void unzipFromSourceToDestination(String source) {
         try {
             ZipFile zipFile = new ZipFile(source);
             zipFile.extractAll(destination);
@@ -83,11 +85,10 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
 
     private void downloadZip(String url) {
         String zipURLFromGithubURL = url.replace(".git", "") + "/archive/master.zip";
-
         try {
             URL website = new URL(zipURLFromGithubURL);
             ReadableByteChannel readableByteChannel = Channels.newChannel(website.openStream());
-            FileOutputStream fileOutputStream = new FileOutputStream(url.split("/")[url.split("/").length - 1].replace(".git", "-master.zip"));
+            FileOutputStream fileOutputStream = new FileOutputStream(destination + "master.zip");
             fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,3 +110,5 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
         this.brjs = brjs;
     }
 }
+
+
