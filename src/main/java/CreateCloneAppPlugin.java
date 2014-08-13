@@ -10,10 +10,7 @@ import org.bladerunnerjs.plugin.utility.command.ArgsParsingCommandPlugin;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.TextProgressMonitor;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,8 +45,8 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
 
     private void getRawRepository(JSAPResult jsapResult) {
         String url = jsapResult.getString("url-of-repo-to-be-cloned");
-//        downloadZip(url);
-        unpackageZip(url);
+        downloadZip(url);
+        ExtractFromZipAtDestination(url);
     }
 
     private void cloneRepository(JSAPResult jsapResult) {
@@ -62,17 +59,20 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     }
 
     private void makeBranchOfRepository(String url, String branchName) throws GitAPIException, JGitInternalException, IOException {
-        url = url.replace("\\", "/");
-        String appName = StringUtils.substringAfterLast(url, "/");
+        String appName = StringUtils.substringAfterLast(url.replace("\\", "/"), "/");
         appName = appName.endsWith(".git") ? StringUtils.substringBeforeLast(appName, ".git") : appName;
         App app = brjs.app(appName);
         app.dir().mkdir();
         Git.cloneRepository().setDirectory(app.dir()).setBranch(branchName).setURI(url).setProgressMonitor(new TextProgressMonitor()).call();
     }
 
-    private void unpackageZip(String url) {
+    private void ExtractFromZipAtDestination(String url) {
         String source = new File("src/test/resources/testRepo/archive/testRepo-master.zip").getAbsolutePath();
         String destination = "C:/Users/robm/BladeRunnerJS/apps";
+        unzipFromSourceToDestination(source, destination);
+    }
+
+    private void unzipFromSourceToDestination(String source, String destination) {
         try {
             ZipFile zipFile = new ZipFile(source);
             zipFile.extractAll(destination);
