@@ -1,13 +1,13 @@
+/*
+ * Created by rob moore on 08/08/2014.
+ */
+
 import org.bladerunnerjs.model.App;
 import org.bladerunnerjs.testing.specutility.engine.SpecTest;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-
-/*
- * Created by robm on 08/08/2014.
- */
 
 public class CreateCloneAppPluginTest extends SpecTest {
 

@@ -1,3 +1,8 @@
+/*
+ * Created by rob moore on 07/08/2014.
+ */
+
+
 import com.martiansoftware.jsap.*;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -19,15 +24,10 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-/*
- * Created by robm on 07/08/2014.
- */
-
 public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
     private BRJS brjs;
 
-    //This string value is the place where the zip file
-    private final String destination = "src/test/resources/apps/"; //THIS VALUE IS FOR TESTING
+    private final String destination = "src/test/resources/apps/"; //THIS VALUE IS FOR TESTING, CHANGE IT!
 
     @Override
     protected void configureArgsParser(JSAP jsap) throws JSAPException {
@@ -110,5 +110,3 @@ public class CreateCloneAppPlugin extends ArgsParsingCommandPlugin {
         this.brjs = brjs;
     }
 }
-
-
