@@ -5,3 +5,5 @@ A command plugin for BladeRunnerJS which clones a github repository with options
 
 ## Future
 - Needs more tests, especially specTests
+
+Credit to [rob moore](https://github.com/robknows)
